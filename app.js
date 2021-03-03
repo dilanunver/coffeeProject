@@ -1,10 +1,11 @@
 const products = [
-  {name : 'mocha', img : 'https://images.immediate.co.uk/production/volatile/sites/30/2020/08/mocha-001-8301418.jpg', stok : 14, prices : {short: 3, tall: 5, grande: 6}},
-  {name : 'latte', img : 'https://www.caffesociety.co.uk/assets/recipe-images/latte-small.jpg', stok : 18, prices : {short: 2, tall: 3, grande: 5}},
-  {name : 'turkCoffee', img : 'https://www.theguideistanbul.com/wp-content/uploads/2018/10/38737621_1003563516492694_4277427688945221632_n-e1539950613399.jpg', stok : 12, prices : {short: 5, tall: 6, grande: 8}},
-  {name : 'cappucino', img : 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Cappuccino_at_Sightglass_Coffee.jpg/1280px-Cappuccino_at_Sightglass_Coffee.jpg', stok : 15, prices : {short: 2.5, tall: 4, grande: 5 }}
+  {name : 'mocha', img : 'https://images.immediate.co.uk/production/volatile/sites/30/2020/08/mocha-001-8301418.jpg', stok : 14, prices : {short: 3, tall: 5, grande: 6}, selectedSize: 'short', short: 0, tall: 0, grande: 0},
+  {name : 'latte', img : 'https://www.caffesociety.co.uk/assets/recipe-images/latte-small.jpg', stok : 18, prices : {short: 2, tall: 3, grande: 5}, selectedSize: 'short', short: 0, tall: 0, grande: 0},
+  {name : 'turkCoffee', img : 'https://www.theguideistanbul.com/wp-content/uploads/2018/10/38737621_1003563516492694_4277427688945221632_n-e1539950613399.jpg', stok : 12, prices : {short: 5, tall: 6, grande: 8}, selectedSize: 'short', short: 0, tall: 0, grande: 0},
+  {name : 'cappucino', img : 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Cappuccino_at_Sightglass_Coffee.jpg/1280px-Cappuccino_at_Sightglass_Coffee.jpg', stok : 15, prices : {short: 2.5, tall: 4, grande: 5 }, selectedSize: 'short', short: 0, tall: 0, grande: 0}
 ];
 const selectedProducts = [];
+
 const productsHolder = document.querySelector('.products-holder');
 const selectedProductsHolder = document.querySelector('.selectedProducts')
 
@@ -22,11 +23,11 @@ function renderProducts(){
       <span>Price : $${products[i].prices.short} </span>
     </div>
     ${products[i].stok <= 0 ? '<span style="color: white; background-color: red;">out of stok</span><p style="color: white; background-color:blue;">cannot add any item, try other items</p>': '<button class="addToCard">Add To Card</button>'}
-    <div><input type="radio" id="short" name="radAnswer" value="short">
+    <div><input type="radio" checked id="short" name=${products[i].name} value="short">
     <label for="short">Short</label><br>
-    <input type="radio" id="tall" name="radAnswer" value="tall">
+    <input type="radio" id="tall" name=${products[i].name} value="tall">
     <label for="tall">Tall</label><br>
-    <input type="radio" id="grande" name="radAnswer" value="grande">
+    <input type="radio" id="grande" name=${products[i].name} value="grande">
     <label for="grande">Grande</label><br></div>`
     if (products[i].stok > 0) {
       const addToCard = element.querySelector('.addToCard');
@@ -86,9 +87,12 @@ function addProductToCard(e){
   }
   if(sameItem){ 
     sameItem.stok++;
+    sameItem[selectedItem.selectedSize] += 1
+    console.log(sameItem)
   } else {
     let selectedOperator = {...selectedItem};
     selectedOperator.stok = 1;
+    selectedOperator[selectedOperator.selectedSize] = 1
     selectedProducts.push(selectedOperator) 
   }
   renderProducts();
@@ -112,12 +116,39 @@ function shortItem(e){
   const chosen = e.currentTarget.parentElement.parentElement;
   const name = chosen.dataset.name
   console.log(name)
+  const sizeName = e.currentTarget.id;
+  console.log(sizeName)
+  let chosenItem = products.find(function(item){
+    return item.name === name;
+  })
+  console.log(chosenItem)
+  chosenItem.selectedSize = 'short'
 }
+
 function tallItem(e){
-  console.log('you chose tall!')
+  const chosen = e.currentTarget.parentElement.parentElement;
+  const name = chosen.dataset.name
+ // console.log(name)
+  const sizeName = e.currentTarget.id;
+ // console.log(sizeName)
+ let chosenItem = products.find(function(item){
+  return item.name === name;
+})
+console.log(chosenItem)
+chosenItem.selectedSize = 'tall'
 }
+
 function grandeItem(e){
-  console.log('you chose grande!')
+  const chosen = e.currentTarget.parentElement.parentElement;
+  const name = chosen.dataset.name
+ // console.log(name)
+  const sizeName = e.currentTarget.id;
+ // console.log(sizeName)
+ let chosenItem = products.find(function(item){
+  return item.name === name;
+})
+console.log(chosenItem)
+chosenItem.selectedSize = 'grande'
 }
 
 
