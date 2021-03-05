@@ -29,11 +29,10 @@ function renderProducts(){
     <label for="tall">Tall</label><br>
     <input type="radio" ${products[i].selectedSize === 'grande' ? 'checked': ''} id="grande" name=${products[i].name} value="grande">
     <label for="grande">Grande</label><br></div>`
-   
-    if (products[i].stok > 0) {
-      const addToCard = element.querySelector('.addToCard');
-      addToCard.addEventListener('click', addProductToCard)
-    }
+      if(products[i].stok > 0){
+        const addToCard = element.querySelector('.addToCard');
+        addToCard.addEventListener('click', addProductToCard)
+      }
     const short = element.querySelector('#short');
     short.addEventListener('click', shortItem)
     const tall = element.querySelector('#tall');
@@ -45,6 +44,8 @@ function renderProducts(){
   } 
 }
 renderSelectedProducts()
+
+
 function renderSelectedProducts(){
   selectedProductsHolder.innerHTML = '';
   for(let i = 0; i < selectedProducts.length; i++){
@@ -57,22 +58,32 @@ function renderSelectedProducts(){
     <div>
       <span>Having Product: ${selectedProducts[i].stok}</span>
       <span>Price : $${selectedProducts[i].totalPrice}</span>
-      <button class="deleteShort">Delete Short</button>
-      <button class="deleteTall">Delete Tall</button>
-      <button class="deleteGrande">Delete Grande</button>
+
+
+      ${selectedProducts[i].short > 0 ? '<button class="deleteShort">Delete Short</button>' : ' '}
+      ${selectedProducts[i].tall > 0  ? '<button class="deleteTall">Delete Tall</button>' : ' '} 
+      ${selectedProducts[i].grande > 0 ? '<button class="deleteGrande">Delete Grande</button>' : ' '} 
     </div>`
-  
-    const deleteShort = element.querySelector('.deleteShort');
-    deleteShort.addEventListener('click', deleteShortItem);
-    const deleteTall = element.querySelector('.deleteTall');
-    deleteTall.addEventListener('click', deleteTallItem);
-    const deleteGrande = element.querySelector('.deleteGrande');
-    deleteGrande.addEventListener('click', deleteGrandeItem);
+    if(selectedProducts[i].short > 0 ) {
+      const deleteShort = element.querySelector('.deleteShort');
+      deleteShort.addEventListener('click', deleteShortItem);
+    }
+    if( selectedProducts[i].tall > 0) {
+      const deleteTall = element.querySelector('.deleteTall');
+      deleteTall.addEventListener('click', deleteTallItem);
+    } else if (selectedProducts[i].grande > 0) { 
+      const deleteGrande = element.querySelector('.deleteGrande');
+      deleteGrande.addEventListener('click', deleteGrandeItem);
+    }
     selectedProductsHolder.appendChild(element);
+
+    }  
+   
   }
 
-}
 renderProducts()
+
+
 function addProductToCard(e){
   const element = e.currentTarget.parentElement;
   const name = element.dataset.name;
@@ -80,9 +91,9 @@ function addProductToCard(e){
   let sameItem;
   for(let i = 0; i<products.length; i++){
     if(name === products[i].name)
-    selectedItem = products[i];
-    
+    selectedItem = products[i];  
   }
+
   for(let i = 0; i<selectedProducts.length; i++){
     if(selectedProducts[i].name === selectedItem.name){
       sameItem = selectedProducts[i];
@@ -94,6 +105,7 @@ function addProductToCard(e){
     selectedItem.stok = 0
     return
   }
+
   if(sameItem){ 
     sameItem.stok++;
     sameItem[selectedItem.selectedSize] += 1
@@ -120,7 +132,8 @@ function deleteShortItem(e){
   let chosenItem = selectedProducts.indexOf(findingShortItem);
     console.log(findingShortItem.stok)
     findingShortItem.stok > 0 ? findingShortItem.stok-- : selectedProducts.splice(chosenItem,1)   
-    findingShortItem.prices.short > 0 ? findingShortItem.prices.short -5 : findingShortItem.prices.short = 0
+    findingShortItem.totalPrice = (findingShortItem.prices.grande* findingShortItem.grande + findingShortItem.prices.short * findingShortItem.short + findingShortItem.prices.tall * findingShortItem.tall) - findingShortItem.prices.short;
+    findingShortItem.short--;
   renderSelectedProducts()
   renderProducts()
   console.log(selectedProducts)
@@ -134,8 +147,10 @@ function deleteTallItem(e){
   })
   let chosenItem = selectedProducts.indexOf(findingTallItem);
     console.log(findingTallItem.stok)
+    console.log(chosenItem)
     findingTallItem.stok > 0 ? findingTallItem.stok-- : selectedProducts.splice(chosenItem,1)   
-    findingTallItem.prices.tall > 0 ? findingTallItem.prices.tall -3 : findingTallItem.prices.tall= 0
+    findingTallItem.totalPrice = (findingTallItem.prices.grande* findingTallItem.grande + findingTallItem.prices.short * findingTallItem.short + findingTallItem.prices.tall * findingTallItem.tall) - findingTallItem.prices.tall;
+    findingTallItem.tall--;
   renderSelectedProducts()
   renderProducts()
   console.log(selectedProducts)
@@ -150,10 +165,13 @@ function deleteGrandeItem(e){
   let chosenItem = selectedProducts.indexOf(findingGrandeItem);
     console.log(findingGrandeItem.stok)
     findingGrandeItem.stok > 0 ? findingGrandeItem.stok-- : selectedProducts.splice(chosenItem,1)   
-    findingGrandeItem.prices.grande > 0 ? findingGrandeItem.prices.grande -= findingGrandeItem.prices.grande  : findingGrandeItem.prices.grande = 0
+    findingGrandeItem.totalPrice = (findingGrandeItem.prices.grande* findingGrandeItem.grande + findingGrandeItem.prices.short * findingGrandeItem.short + findingGrandeItem.prices.tall * findingGrandeItem.tall) - findingGrandeItem.prices.grande;
+    findingGrandeItem.grande --;
+    console.log(findingGrandeItem.grande)
   renderSelectedProducts()
   renderProducts()
   console.log(findingGrandeItem.prices.grande )
+
 }
 function shortItem(e){
   const chosen = e.currentTarget.parentElement.parentElement;
